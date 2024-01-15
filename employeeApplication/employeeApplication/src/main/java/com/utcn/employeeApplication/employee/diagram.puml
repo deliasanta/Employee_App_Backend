@@ -1,0 +1,79 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+actor User
+actor Admin
+
+  User -> DepartmentService: createDepartment(Department department)
+  DepartmentService -> DepartmentRepository: save(Department department)
+  DepartmentRepository --> DepartmentService: Department department
+
+  User -> DepartmentService: getDepartmentById(Integer departmentId)
+  DepartmentService -> DepartmentRepository: findById(Integer departmentId)
+  DepartmentRepository --> DepartmentService: Department department
+
+  User -> DepartmentService: findDepartmentsByManager(Integer managerID)
+  DepartmentService -> DepartmentRepository: findDepartmentsByManagerID(Integer managerID)
+  DepartmentRepository --> DepartmentService: List<Department> departments
+
+  Admin -> DepartmentService: updateDepartment(Integer departmentId, Map<String, Object> updates)
+  DepartmentService -> DepartmentRepository: findById(Integer departmentId)
+  DepartmentRepository --> DepartmentService: Department existingDepartment
+  DepartmentService -> existingDepartment: setDescription(value)
+  DepartmentService -> existingDepartment: setParentID((Integer) value)
+  DepartmentService -> existingDepartment: setManagerID((Integer) value)
+  DepartmentService -> DepartmentRepository: save(existingDepartment)
+  DepartmentRepository --> DepartmentService: Department updatedDepartment
+
+  Admin -> DepartmentService: deleteDepartmentById(Integer departmentId)
+  DepartmentService -> DepartmentRepository: deleteById(Integer departmentId)
+
+
+
+  User -> EmployeeService: createEmployee(Employee employee)
+  EmployeeService -> EmployeeRepository: save(Employee employee)
+  EmployeeRepository --> EmployeeService: Employee employee
+
+  User -> EmployeeService: getEmployeeById(Integer id)
+  EmployeeService -> EmployeeRepository: findById(Integer id)
+  EmployeeRepository --> EmployeeService: Employee employee
+
+  User -> EmployeeService: updateEmployee(Integer id, Map<String, Object> updates)
+  EmployeeService -> EmployeeRepository: findById(Integer id)
+  EmployeeRepository --> EmployeeService: Employee existingEmployee
+  EmployeeService -> existingEmployee: setName(value)
+  EmployeeService -> existingEmployee: setDepartmentID((Integer) value)
+  EmployeeService -> existingEmployee: setManagerID((Integer) value)
+  EmployeeService -> existingEmployee: setEmail(value)
+  EmployeeService -> EmployeeRepository: save(existingEmployee)
+  EmployeeRepository --> EmployeeService: Employee updatedEmployee
+
+  Admin -> EmployeeService: deleteEmployeeById(Integer id)
+  EmployeeService -> EmployeeRepository: deleteById(Integer id)
+
+
+User --> DepartmentController: getDepartments()
+DepartmentController -> DepartmentService: getAllDepartments()
+DepartmentService --> DepartmentRepository: findAll()
+DepartmentRepository --> DepartmentService: List<Department> departments
+DepartmentController --> User: List<Department> departments
+
+User --> EmployeeController: getEmployeesByEmail(String email)
+EmployeeController -> EmployeeService: findEmployeesByEmail(String email)
+EmployeeService -> EmployeeRepository: findEmployeesByEmail(String email)
+EmployeeRepository --> EmployeeService: List<Employee> employees
+EmployeeController --> User: List<Employee> employees
+
+User --> EmployeeController: getEmployeesByDepartment(Integer departmentID)
+EmployeeController -> EmployeeService: getEmployeesByDepartment(Integer departmentID)
+EmployeeService -> EmployeeRepository: findEmployeesByDepartmentID(Integer departmentID)
+EmployeeRepository --> EmployeeService: List<Employee> employees
+EmployeeController --> User: List<Employee> employees
+
+User --> EmployeeController: getManagersByDepartment(Integer departmentID)
+EmployeeController -> EmployeeService: getManagersByDepartment(Integer departmentID)
+EmployeeService -> EmployeeRepository: findEmployeesByDepartmentIDAndManagerIDNot(Integer departmentID, Integer managerID)
+EmployeeRepository --> EmployeeService: List<Employee> managers
+EmployeeController --> User: List<Employee> managers
+@enduml
